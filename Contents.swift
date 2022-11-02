@@ -15,25 +15,29 @@ enum trafficLightTipe {
     case yellow
     case red
     
-    var lightColor: String {
+    var lightColor: Int { //信号の色の時間(Int)を返すようにしてみる？
         switch self{
+            //一旦秒数を減らしておく
         case .blue:
-            return "青"
+            return 9
         case .yellow:
-            return "黄色"
+            return 3
         case .red:
-            return "赤"
+            return 5
         }
     }
 }
 
-class trafficLightTime {
+class trafficLight {
     var timer: Timer?
-    //カウントが負の数にならないように「UInt」で定義してみる
-    var blueTime: UInt = 3
-    var yellowTime:UInt = 3
-    var redTime: UInt = 3
-    var clossLoad: UInt = 3
+    var count = 0
+    var limit = 0
+    //各信号の時間を扱いやすいように配列に格納してみる
+    var lightTime = [9,3,5]
+    
+    //今から何が必要か
+    //現在、何色の信号か表示する
+    //各信号機のカウウトダウンの実装
     
     func start() {
         // 任意の箇所でTimerクラスを使用して1秒毎にcountup()メソッドを実行させるタイマーをセット
@@ -48,32 +52,8 @@ class trafficLightTime {
     
     // Timerクラスに設定するメソッドは「@objc」キワードを忘れずに付与する
     @objc func countdown() {
-        // 青信号をカウントダウン
-        // 青色の信号のカウントが0より大きい時、青信号のカウントを1秒ずつ1減らす
-        if blueTime > 0 {
-            blueTime -= 1
-            print("青信号は残り\(blueTime)秒です")
-        }
         
-        // 青色の信号のカウントが0になったとき、黄色がカウントダウンされる
-        if blueTime == 0 {
-            yellowTime -= 1
-            print("黄信号は残り\(yellowTime)秒です")
-        }
-        
-        //黄信号が0になった時、赤信号がカウントダウン開始
-        if yellowTime == 0 {
-            while redTime >= 0 { //なぜか「wjile」を使わないとカウントダウンしなくなった
-                redTime -= 1
-                print("赤信号は残り\(redTime)秒です")
-            }
-        }
-        //赤信号になった時、交差道路の信号が変わる
-        if redTime == 0 {
-            clossLoad -= 1
-            print("青信号まであと\(clossLoad)秒です")
-        }
     }
 }
-let alarm = trafficLightTime()
+let alarm = trafficLight()
 alarm.start()
