@@ -30,10 +30,8 @@ enum trafficLightTipe {
 class trafficLightTime {
     var timer: Timer?
     //カウントが負の数にならないように「UInt」で定義してみる
-    var blueTime: UInt = 3
-    var yellowTime:UInt = 3
-    var redTime: UInt = 3
-    var clossLoad: UInt = 3
+    var time = (blue:3, yellow:3, red:3, clossLoad:3)
+    let limit = 0
     
     func start() {
         // 任意の箇所でTimerクラスを使用して1秒毎にcountup()メソッドを実行させるタイマーをセット
@@ -50,30 +48,33 @@ class trafficLightTime {
     @objc func countdown() {
         // 青信号をカウントダウン
         // 青色の信号のカウントが0より大きい時、青信号のカウントを1秒ずつ1減らす
-        if blueTime > 0 {
-            blueTime -= 1
-            print("青信号は残り\(blueTime)秒です")
+        if time.blue > limit {
+            time.blue -= 1
+            print("青信号は残り\(time.blue)秒です")
         }
         
         // 青色の信号のカウントが0になったとき、黄色がカウントダウンされる
-        if blueTime == 0 {
-            yellowTime -= 1
-            print("黄信号は残り\(yellowTime)秒です")
+        if time.blue == limit, time.yellow > limit {
+            time.yellow -= 1
+            print("黄信号は残り\(time.yellow)秒です")
         }
         
         //黄信号が0になった時、赤信号がカウントダウン開始
-        if yellowTime == 0 {
-            while redTime >= 0 { //なぜか「wjile」を使わないとカウントダウンしなくなった
-                redTime -= 1
-                print("赤信号は残り\(redTime)秒です")
-            }
+        if time.yellow == limit, time.red > limit {
+            time.red -= 1
+                print("赤信号は残り\(time.red)秒です")
         }
+        
         //赤信号になった時、交差道路の信号が変わる
-        if redTime == 0 {
-            clossLoad -= 1
-            print("青信号まであと\(clossLoad)秒です")
+        if time.red == limit, time.clossLoad > limit {
+            time.clossLoad -= 1
+            print("次の青信号まであと\(time.clossLoad)秒です")
+        }
+        
+        if time.clossLoad == limit {
+            timer?.invalidate()
         }
     }
 }
-let alarm = trafficLightTime()
-alarm.start()
+let lightTime = trafficLightTime()
+lightTime.start()
