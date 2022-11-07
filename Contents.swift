@@ -33,6 +33,13 @@ class trafficLightTime {
     var time = (blue:3, yellow:3, red:3, clossLoad:3)
     let limit = 0
     
+    init(blue:Int, yellow:Int, red:Int, clossLoad:Int){
+        self.time.blue = blue
+        self.time.yellow = yellow
+        self.time.red = red
+        self.time.clossLoad = clossLoad
+    }
+    
     func start() {
         // 任意の箇所でTimerクラスを使用して1秒毎にcountup()メソッドを実行させるタイマーをセット
         timer = Timer.scheduledTimer(
@@ -76,5 +83,5 @@ class trafficLightTime {
         }
     }
 }
-let lightTime = trafficLightTime()
+let lightTime = trafficLightTime(blue: 3, yellow: 3, red: 3, clossLoad: 3)
 lightTime.start()
