@@ -1,45 +1,50 @@
-//信号機
-//車両用は青、黄、赤が表示される
-//歩行者用は青、赤が表示される
-//対面信号は青90秒、黄3秒、赤50秒のサイクルで色の表示を変更する
-//対面信号が黄から赤に変わったら、交差道路の車両用、歩行者用の各信号機が同時に赤から青に変わる
-
 import Foundation // Timerクラスを使用するために必要なモジュール
 import PlaygroundSupport // Playground上でTimerクラスを機能させるために必要なモジュール
 
 // デフォルトだとTimerクラスを継続的に処理させることが出来ないため、フラグを変更
 PlaygroundPage.current.needsIndefiniteExecution = true
 
-enum trafficLightTipe {
-    case blue
-    case yellow
-    case red
-    
-    var lightColor: Int { //信号の色の時間(Int)を返すようにしてみる？
-        switch self{
-            //一旦秒数を減らしておく
-        case .blue:
-            return 9
-        case .yellow:
-            return 3
-        case .red:
-            return 5
-        }
-    }
-}
+
 
 class trafficLight {
+    
+    enum LightType {
+        case blue
+        case yellow
+        case red
+        
+        var lightColor: String {
+            switch self{
+            case .blue:
+                return "青"
+            case .yellow:
+                return "黄色"
+            case .red:
+                return "赤"
+            }
+        }
+    }
+    
     var timer: Timer?
-    var count = 0
-    var limit = 0
-    //各信号の時間を扱いやすいように配列に格納してみる
-    var lightTime = [9,3,5]
+    //カウントが負の数にならないように「UInt」で定義してみる
+    var time = (blue:3, yellow:3, red:3, clossLoad:3)
+    let limit = 0
     
-    //今から何が必要か
-    //現在、何色の信号か表示する
-    //各信号機のカウウトダウンの実装
     
-    func start() {
+    func start(lightType: LightType) {
+        
+        if time.blue > 0 {
+            print("\(lightType.lightColor)です")
+        }
+        
+        if time.blue == 0 && time.yellow > 0 {
+            print("\(lightType.lightColor)です")
+        }
+        
+        if time.yellow == 0 && time.red > 0 {
+            print("\(lightType.lightColor)です")
+        }
+        
         // 任意の箇所でTimerクラスを使用して1秒毎にcountup()メソッドを実行させるタイマーをセット
         timer = Timer.scheduledTimer(
             timeInterval: 1, // タイマーの実行間隔を指定(単位はn秒)
@@ -52,8 +57,37 @@ class trafficLight {
     
     // Timerクラスに設定するメソッドは「@objc」キワードを忘れずに付与する
     @objc func countdown() {
+        // 青信号をカウントダウン
+        // 青色の信号のカウントが0より大きい時、青信号のカウントを1秒ずつ1減らす
+        if time.blue > limit {
+            time.blue -= 1
+            print("青信号は残り\(time.blue)秒です")
+        }
         
+        // 青色の信号のカウントが0になったとき、黄色がカウントダウンされる
+        if time.blue == limit, time.yellow > limit {
+                time.yellow -= 1
+                print("黄信号は残り\(time.yellow)秒です")
+            
+        }
+        
+        //黄信号が0になった時、赤信号がカウントダウン開始
+        if time.yellow == limit, time.red > limit {
+                time.red -= 1
+                print("赤信号は残り\(time.red)秒です")
+        }
+        
+        //赤信号になった時、交差道路の信号が変わる/カウントされない。なぜ？
+        if time.red == limit {
+            time.clossLoad -= 1
+            print("次の青信号まであと\(time.clossLoad)秒です")
+        }
+        
+        if time.clossLoad == 0 {
+            timer?.invalidate()
+        }
     }
 }
-let alarm = trafficLight()
-alarm.start()
+
+let lightTime = trafficLight()
+lightTime.start(lightType: .blue)
