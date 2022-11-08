@@ -33,12 +33,6 @@ class trafficLightTime {
     var time = (blue:3, yellow:3, red:3, clossLoad:3)
     let limit = 0
     
-    init(blue:Int, yellow:Int, red:Int, clossLoad:Int){
-        self.time.blue = blue
-        self.time.yellow = yellow
-        self.time.red = red
-        self.time.clossLoad = clossLoad
-    }
     
     func start() {
         // 任意の箇所でTimerクラスを使用して1秒毎にcountup()メソッドを実行させるタイマーをセット
@@ -69,7 +63,7 @@ class trafficLightTime {
         //黄信号が0になった時、赤信号がカウントダウン開始
         if time.yellow == limit, time.red > limit {
             time.red -= 1
-                print("赤信号は残り\(time.red)秒です")
+            print("赤信号は残り\(time.red)秒です")
         }
         
         //赤信号になった時、交差道路の信号が変わる
@@ -82,6 +76,18 @@ class trafficLightTime {
             timer?.invalidate()
         }
     }
+    
+    //歩行者が押しボタンを押した際に対面信号が青もしくは黄色だった場合、そのカウントを0にして対面信号を赤表示に。そして歩行者用の信号機を青にする
+    func pushButton() {
+        if time.blue > 0 || time.yellow > 0 {
+            time.blue = limit
+            time.yellow = limit
+            time.clossLoad -= 1
+            print("歩行者がボタンを押したため赤になりました。次の青信号まで\(time.clossLoad)秒です")
+        }
+    }
 }
-let lightTime = trafficLightTime(blue: 3, yellow: 3, red: 3, clossLoad: 3)
+let lightTime = trafficLightTime()
+lightTime.pushButton()
 lightTime.start()
+
