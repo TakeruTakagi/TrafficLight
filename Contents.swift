@@ -30,7 +30,7 @@ enum trafficLightTipe {
 class trafficLightTime {
     var timer: Timer?
     //カウントが負の数にならないように「UInt」で定義してみる
-    var time = (blue:3, yellow:3, red:3, clossLoad:3)
+    var time = (blue:9, yellow:3, red:5, clossLoad:4)
     let limit = 0
     
     
@@ -78,12 +78,17 @@ class trafficLightTime {
     }
     
     //歩行者が押しボタンを押した際に対面信号が青もしくは黄色だった場合、そのカウントを0にして対面信号を赤表示に。そして歩行者用の信号機を青にする
+    //　→　青信号の時にボタンを押したら、「黄色」→「赤」に変わる。つまり、ボタンを押したら青を「0」にする操作でいい
     func pushButton() {
-        if time.blue > 0 || time.yellow > 0 {
-            time.blue = limit
-            time.yellow = limit
+        if time.blue > limit {       //対面信号が青だった場合
+            time.blue == limit
+        }
+        while time.clossLoad > limit {
             time.clossLoad -= 1
             print("歩行者がボタンを押したため赤になりました。次の青信号まで\(time.clossLoad)秒です")
+        }
+        if time.clossLoad == limit { //time.clossLoad が「0」になった時、タイマーがストップするため、元の時間をたす
+            time.clossLoad = 4
         }
     }
 }
